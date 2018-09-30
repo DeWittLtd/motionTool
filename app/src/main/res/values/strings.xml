@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MotionTool</string>
+    <string name="roll_str">Roll:</string>
+    <string name="pitch_str">Pitch:</string>
+    <string name="azimuth_str">Azimuth</string>
+    <string name="save_str">Save</string>
+    <string name="start_stop_btn">Start</string>
+    <string name="stop_btn">Stop</string>
+</resources>

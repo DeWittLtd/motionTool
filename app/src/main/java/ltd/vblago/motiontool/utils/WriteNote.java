@@ -16,16 +16,20 @@ public class WriteNote implements OrientationSensorInterface {
     private MyCallback callback;
     private int time;
     private static final int START = 1;
+    private static final int DOWNTIME = 10; // downtime in 0.1 second
+    private static final int INITIAL_CAPACITY = 20;
     private boolean isStarted;
     private Position currentPosition;
     private int primordialAzimuth;
+    private int stopCounter;
     public ArrayList<Position> positions;
     private Context context;
 
     public WriteNote(Context context) {
         time = 0;
+        stopCounter = 0;
         this.context = context;
-        positions = new ArrayList<>(20);
+        positions = new ArrayList<>(INITIAL_CAPACITY);
         currentPosition = new Position();
 
         Orientation orientationSensor = new Orientation(this.context, this);
@@ -50,11 +54,27 @@ public class WriteNote implements OrientationSensorInterface {
         @Override
         public void dispatchMessage(Message msg) {
             if (msg.what == START) {
-                if (primordialAzimuth == -1){
-                    primordialAzimuth = currentPosition.azimuth;
+                if (currentPosition.pitch>-16 && currentPosition.pitch<16 && currentPosition.roll>-21 && currentPosition.roll<16){
+                    if (isStarted){
+                        if (stopCounter > DOWNTIME){
+                            stopStopwatch();
+                        }
+                        if (stopCounter == 0){
+                            callback.showStateOfWritingNote(0);
+                        }
+                            stopCounter++;
+                    }else {
+                        h.sendEmptyMessageDelayed(START, 100);
+                    }
                 }
                 time += 1;
+                stopCounter = 0;
                 positions.add(currentPosition.getCopyForDb(primordialAzimuth));
+                if (!isStarted){
+                    isStarted = true;
+                    primordialAzimuth = currentPosition.azimuth;
+                    callback.showStateOfWritingNote(1);
+                }
                 h.sendEmptyMessageDelayed(START, 100);
             }
         }
@@ -66,7 +86,7 @@ public class WriteNote implements OrientationSensorInterface {
 
     public void startStopwatch() {
         primordialAzimuth = -1;
-        isStarted = true;
+        stopCounter = 0;
         h.sendEmptyMessage(START);
     }
 
@@ -76,9 +96,9 @@ public class WriteNote implements OrientationSensorInterface {
 //        }
         isStarted = false;
         h.removeMessages(START);
-        callback.showProgress(new NoteModel(positions, time));
+        callback.showProgress(new NoteModel(positions, time, DOWNTIME));
         time = 0;
-        positions = new ArrayList<>(20);
+        positions = new ArrayList<>(INITIAL_CAPACITY);
     }
 
     @Override
@@ -90,5 +110,6 @@ public class WriteNote implements OrientationSensorInterface {
 
     public interface MyCallback {
         void showProgress(NoteModel noteModel);
+        void showStateOfWritingNote(int state);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ltd.vblago.motiontool.math.Matrix3x3;
+import ltd.vblago.motiontool.utils.Matrix3x3;
 import ltd.vblago.motiontool.responseProvider.orientationResponseProvider;
 import ltd.vblago.motiontool.utils.WriteNote;
 

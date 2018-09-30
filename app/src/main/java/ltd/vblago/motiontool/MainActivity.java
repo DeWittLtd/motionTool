@@ -49,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
                 note = noteModel;
                 savedNote = true;
             }
+
+            @Override
+            public void showStateOfWritingNote(int state) {
+                // changing color of background
+            }
         });
 
         String currentDBPath = getDatabasePath("NoteDb").getAbsolutePath();

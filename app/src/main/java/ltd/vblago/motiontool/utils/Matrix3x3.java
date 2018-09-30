@@ -1,4 +1,4 @@
-package ltd.vblago.motiontool.math;
+package ltd.vblago.motiontool.utils;
 
 public class Matrix3x3 {
 
